@@ -112,7 +112,11 @@ int CoinD4::loop() {
           uint16_t exp = rx_buffer[i * 3] & 0x01;
 
           float distance_m_f = ((float)distance) / 1000.f;
-          float angle_deg_f = (start_angle_f + (i * angle_interval));
+          float angle_correction = 0 ;
+          if(distance > 0){
+              angle_correction = (float)(atan(19.16*(distance-90.15)/(90.15*distance)));
+          }
+          float angle_deg_f = (start_angle_f + (i * angle_interval) + angle_correction);
           angle_deg_f = angle_deg_f >= 360.f ? (angle_deg_f - 360.f) : angle_deg_f;
           this->scan_point_callback(angle_deg_f, distance_m_f, (float) quality,  exp);
         }

@@ -2,12 +2,15 @@
 
 
 void scan_point_callback(float angle, float distance, float quality, bool exp){
-    Serial.print("Angle: ");
-    Serial.print(angle);
-    Serial.print(" Distance: ");
-    Serial.print(distance);
-    Serial.print("Quality: ");
-    Serial.println(quality);
+
+    if(quality > 50 && distance < 4.0){
+      Serial.print("Angle: ");
+      Serial.print(angle);
+      Serial.print(" Distance: ");
+      Serial.print(distance);
+      Serial.print("Quality: ");
+      Serial.println(quality);
+    }
 }
 CoinD4 lidar(&Serial1);
 void setup() {
