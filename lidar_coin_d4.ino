@@ -1,7 +1,7 @@
 #include "coin_d4.hpp"
 
 
-void scan_point_callback(float angle, float distance, float quality, bool exp){
+void scan_point_callback(float angle, float distance, float quality, bool scan_completed){
 
     if(quality > 50 && distance < 4.0){
       Serial.print("Angle: ");

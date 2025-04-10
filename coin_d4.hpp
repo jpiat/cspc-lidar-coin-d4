@@ -56,6 +56,6 @@ protected:
   uint8_t scan_freq = 0;
   long long last_start = 0;
   float rate  = -1; 
-
+  bool one_turn ;
   float start_angle_f, end_angle_f;
 };
