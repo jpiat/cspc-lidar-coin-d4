@@ -46,7 +46,6 @@ protected:
   coin_d4_read_state current_state;
   uint16_t packet_buffer_to_read ;
   uint16_t nb_samples = 0;
-  uint16_t nb_samples_and_ct_cal;
   uint16_t start_angle = 0;
   uint16_t end_angle = 0;
   uint16_t checksum = 0;
