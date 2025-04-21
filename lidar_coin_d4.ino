@@ -118,5 +118,6 @@ void loop() {
     lidar.stop();
     delay(1000);
     lidar.start();
+    last_packet = now ;
   }
 }

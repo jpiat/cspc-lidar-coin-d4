@@ -26,18 +26,18 @@ int CoinD4::loop() {
   int actual_read;
   int to_read;
   int serial_available = 0;
-  bool packet_processed = false ;
+  bool packet_processed = false;
   while ((serial_available = this->intf->available()) > 0 && !packet_processed) {
     switch (this->current_state) {
       case READ_SYNC:
-        this->one_turn = false ;
+        this->one_turn = false;
         if (serial_available >= 2) {
           uint8_t aa = this->intf->read();
           if (0xAA == aa) {
             uint8_t cc = this->intf->read();
             if (cc == 0x55) {
               this->current_state = READ_HEADER;
-              checksum_calc = 0x55AA;
+              this->checksum_calc = 0x55AA;
             }
           }
         }
@@ -53,9 +53,10 @@ int CoinD4::loop() {
             last_start = now;
             this->rate = 1000.f / (float)(diff);
             this->scan_freq = (this->rx_buffer[0] & 0xFE) >> 1;
-            this->one_turn = true ;
+            this->one_turn = true;
           }
           this->nb_samples_and_ct_cal = this->rx_buffer[0] + this->rx_buffer[1] << 8;
+          this->checksum_calc ^= this->nb_samples_and_ct_cal;
           this->nb_samples = this->rx_buffer[1];
           this->start_angle = (this->rx_buffer[2] + (this->rx_buffer[3] << 8));
           if (this->start_angle & 0x01 == 0) {
@@ -108,10 +109,30 @@ int CoinD4::loop() {
           }
         }
         if (this->packet_buffer_to_read == 0) {
+          uint16_t Valu8Tou16 = 0 ;
+          for (size_t pos = 0; pos < (nb_samples * 3); ++pos) {
+              if (pos % 3 == 2) {
+                Valu8Tou16 += rx_buffer[pos] * 0x100;
+                this->checksum_calc ^= Valu8Tou16;
+              } else if (pos % 3 == 1) {
+                Valu8Tou16 = rx_buffer[pos];
+              } else {
+                Valu8Tou16 = rx_buffer[pos];
+                Valu8Tou16 += 0x00 * 0x100;
+                this->checksum_calc ^= rx_buffer[pos];
+              }
+          }
+          /*if(this->checksum_calc != this->checksum){
+            Serial.println("Bad checksum");
+            this->current_state = READ_SYNC;
+            ret = 0 ;
+            break ;
+          }*/
+
           for (int i = 0; i < nb_samples; i++) {
             uint16_t distance = (rx_buffer[i * 3 + 2] << 6) + (rx_buffer[i * 3 + 1] >> 2);
             uint16_t quality = (rx_buffer[i * 3] >> 2) + ((rx_buffer[i * 3 + 1] & 0x03) << 6);
-            uint16_t exp = rx_buffer[i * 3] & 0x01; //Not sure what it can be used for ...
+            uint16_t exp = rx_buffer[i * 3] & 0x01;  //Not sure what it can be used for ...
 
             float distance_m_f = ((float)distance) / 1000.f;
             float angle_correction = 0;
@@ -124,7 +145,7 @@ int CoinD4::loop() {
           }
           ret = 1;
           this->current_state = READ_SYNC;
-          packet_processed = true ;
+          packet_processed = true;
         }
         break;
       default:
