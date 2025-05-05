@@ -25,7 +25,7 @@ public:
   typedef void (*ScanPointCallback)(float, float, float, bool);
 
 public:
-  CoinD4(SerialUART* intf);
+  CoinD4(HardwareSerial* intf);
   void begin();
   void init();
   void start();
@@ -39,7 +39,7 @@ public:
 
 protected:
 
-  SerialUART* intf;
+  HardwareSerial* intf;
   uint8_t rx_buffer[256];
   uint8_t rx_buffer_write_index = 0;
   ScanPointCallback scan_point_callback;

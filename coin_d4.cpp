@@ -1,6 +1,6 @@
 #include "coin_d4.hpp"
 
-CoinD4::CoinD4(SerialUART* intf) {
+CoinD4::CoinD4(HardwareSerial* intf) {
   this->intf = intf;
   this->current_state = READ_SYNC;
 }
