@@ -41,20 +41,18 @@ void scan_point_callback(float angle_deg, float distance_m, float quality,
 
 
 
-CoinD4 lidar(&Serial1);
+CoinD4 lidar(&Serial0);
 String http_page_index = String(index_html);
 bool connected = false;
-WiFiMulti multi;
 
 void setup() {
 
-  Serial.begin();
+  Serial.begin(115200);
   WiFi.mode(WIFI_STA);
-  WiFi.setHostname("PicoW2");
+  WiFi.setHostname("coin-lidar");
   Serial.printf("Connecting to '%s' with '%s'\n", SSID, PASSWORD);
   WiFi.begin(SSID, PASSWORD);
-  multi.addAP(SSID, PASSWORD);
-  while (multi.run() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
     delay(100);
   }
