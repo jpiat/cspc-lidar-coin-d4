@@ -27,6 +27,7 @@ public:
 public:
   CoinD4(HardwareSerial* intf);
   void begin();
+  void begin(int rx, int tx);
   void init();
   void start();
   void stop();

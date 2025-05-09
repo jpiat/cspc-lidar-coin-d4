@@ -4,6 +4,9 @@
 #include <WebSocketsServer.h>  //websockets library by Markus Sattler
 
 
+#define LIDAR_RX 25
+#define LIDAR_TX 26
+
 #define SSID ""
 #define PASSWORD ""
 
@@ -41,7 +44,7 @@ void scan_point_callback(float angle_deg, float distance_m, float quality,
 
 
 
-CoinD4 lidar(&Serial0);
+CoinD4 lidar(&Serial1);
 String http_page_index = String(index_html);
 bool connected = false;
 
@@ -61,7 +64,11 @@ void setup() {
   webSocket.onEvent(webSocketEvent);
 
   lidar.setScanPointCallback(scan_point_callback);
+#if defined(LIDAR_RX) && defined(LIDAR_TX)
+  lidar.begin(LIDAR_RX, LIDAR_TX);
+#else
   lidar.begin();
+#endif
   lidar.stop();
   delay(1000);
   lidar.start();
@@ -116,6 +123,6 @@ void loop() {
     lidar.stop();
     delay(1000);
     lidar.start();
-    last_packet = now ;
+    last_packet = now;
   }
 }

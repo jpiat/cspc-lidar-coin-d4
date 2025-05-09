@@ -9,6 +9,10 @@ void CoinD4::begin() {
   this->intf->begin(230400);
 }
 
+void CoinD4::begin(int rx, int tx) {
+  this->intf->begin(230400, SERIAL_8N1, rx, tx);
+}
+
 void CoinD4::start() {
   this->intf->write(CoinD4::start_lidar, 4);
   this->intf->flush();
